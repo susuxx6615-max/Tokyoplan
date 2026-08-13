@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>東京 2026.12.04–12.11 行程手帳</title>
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="東京 2026.12.04–12.11 行程手帳">
+<meta property="og:description" content="八天行程、每日早中晚細節、旅費分攤，開網頁就能用。">
+<meta name="theme-color" content="#E9EFF4">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --ink:#343A41;
+  --ink-soft:#5B636C;
+  --muted:#959CA4;
+  --paper:#F5F6F3;
+  --surface:#FFFFFF;
+  --line:#E8E9E5;
+  --line-soft:#F0F1ED;
+
+  --accent:#56738F;
+  --accent-tint:#93ABC5;
+  --accent-soft:#EDF2F7;
+
+  --sage:#8FAB9B;
+  --sage-soft:#EEF4EF;
+  --sand:#C7AE85;
+  --sand-soft:#F8F3E9;
+
+  --red:#AE6C63;
+  --green:#4F8368;
+
+  --radius:18px;
+  --tabbar:64px;
+  --shadow:0 1px 2px rgba(52,58,65,.04),0 14px 30px -22px rgba(52,58,65,.28);
+  --serif:"Noto Serif TC",serif;
+  --sans:"Noto Sans TC",-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang TC","Microsoft JhengHei",sans-serif;
+  --mono:"Roboto Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.75;
+  padding-bottom:calc(var(--tabbar) + env(safe-area-inset-bottom));
+  -webkit-text-size-adjust:100%;
+  transition:padding-bottom .2s ease;
+}
+body.hasbar{padding-bottom:calc(var(--tabbar) + 68px + env(safe-area-inset-bottom))}
+body.dragging-on{user-select:none;-webkit-user-select:none}
+button,input,select,textarea{font-family:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none;padding:0;font-size:inherit}
+:focus-visible{outline:2px solid var(--accent-tint);outline-offset:2px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ---------- header ---------- */
+.masthead{
+  position:relative;overflow:hidden;
+  background:linear-gradient(155deg,#E9EFF4 0%,#F1EEF3 48%,#F5F2EA 100%);
+  color:var(--ink);
+  padding:28px 20px 20px;
+  padding-top:calc(28px + env(safe-area-inset-top));
+}
+.masthead::before{
+  content:"";position:absolute;right:-70px;top:-70px;width:210px;height:210px;border-radius:50%;
+  background:radial-gradient(circle,rgba(143,171,155,.30),transparent 68%);
+  pointer-events:none;
+}
+.masthead::after{
+  content:"";position:absolute;right:34px;bottom:-46px;width:120px;height:120px;border-radius:50%;
+  background:radial-gradient(circle,rgba(147,171,197,.28),transparent 68%);
+  pointer-events:none;
+}
+.masthead > *{position:relative}
+.masthead .eyebrow{
+  font-family:var(--mono);font-size:11px;letter-spacing:.24em;
+  color:var(--accent);text-transform:uppercase;
+}
+.masthead h1{
+  font-family:var(--serif);font-weight:700;
+  font-size:27px;line-height:1.3;margin:7px 0 0;letter-spacing:.03em;
+}
+.masthead .sub{font-size:12.5px;color:var(--ink-soft);margin-top:7px}
+
+/* ---------- rail ---------- */
+.railwrap{
+  position:sticky;top:0;z-index:40;
+  background:rgba(255,255,255,.94);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+  border-bottom:1px solid var(--line);
+}
+.railwrap::-webkit-scrollbar{display:none}
+.rail{position:relative;display:flex;min-width:max-content;padding:11px 18px 13px;gap:2px}
+.rail::before{
+  content:"";position:absolute;left:18px;right:18px;top:43px;
+  height:1px;background:var(--line);
+}
+.stop{
+  position:relative;display:flex;flex-direction:column;align-items:center;
+  width:58px;padding:0;color:var(--muted);transition:color .18s ease;
+}
+.stop .wd{font-size:11px;line-height:1;height:14px;margin-bottom:9px}
+.stop .dot{
+  width:9px;height:9px;border-radius:50%;background:#fff;
+  border:1.5px solid #CBD2D8;transition:all .18s ease;
+}
+.stop .dd{font-family:var(--mono);font-size:14px;margin-top:9px;letter-spacing:-.02em}
+.stop .tag{
+  font-size:10px;line-height:1.3;margin-top:1px;height:14px;color:var(--muted);
+  max-width:56px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.stop[aria-selected="true"]{color:var(--ink)}
+.stop[aria-selected="true"] .dot{
+  background:var(--accent);border-color:var(--accent);transform:scale(1.4);
+  box-shadow:0 0 0 5px var(--accent-soft);
+}
+.stop[aria-selected="true"] .dd{font-weight:500;color:var(--accent)}
+.stop[aria-selected="true"] .tag{color:var(--accent-tint)}
+
+/* ---------- layout ---------- */
+main{padding:20px 16px 32px;max-width:640px;margin:0 auto}
+.panel{display:none}
+.panel.on{display:block;animation:fade .22s ease}
+@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+.card{
+  background:var(--surface);border:1px solid var(--line);
+  border-radius:var(--radius);padding:18px;margin-bottom:14px;
+  box-shadow:var(--shadow);
+}
+.card.flush{padding:0;overflow:hidden}
+
+h2.sec{
+  display:flex;align-items:center;gap:9px;
+  font-family:var(--serif);font-size:17px;font-weight:700;
+  margin:26px 0 11px;letter-spacing:.03em;
+}
+h2.sec::before{
+  content:"";flex:none;width:7px;height:7px;border-radius:50%;
+  background:var(--accent-tint);
+}
+h2.sec:first-child{margin-top:2px}
+.lead{font-size:13px;color:var(--muted);margin:-6px 0 12px;padding-left:16px}
+
+/* ---------- overview list（可拖曳） ---------- */
+#daylist{position:relative}
+.dayrow{
+  position:relative;display:flex;align-items:flex-start;gap:12px;
+  padding:14px 12px 14px 16px;border-bottom:1px solid var(--line-soft);
+  background:var(--surface);
+  transition:transform .16s cubic-bezier(.2,.8,.3,1),box-shadow .16s ease;
+}
+.dayrow:last-child{border-bottom:none}
+.dayrow .rowdate{flex:none;width:44px;padding-top:1px}
+.dayrow .rowdate .dd{
+  display:block;font-family:var(--mono);font-size:13px;color:var(--accent);letter-spacing:-.02em;
+}
+.dayrow .rowdate .wd{display:block;font-size:11px;color:var(--muted);margin-top:1px}
+.dayrow .rowmain{flex:1;min-width:0;text-align:left}
+.dayrow .rowmain strong{display:block;font-size:14.5px;font-weight:600;line-height:1.5}
+.dayrow .rowmain .ol{
+  display:block;font-size:12.5px;color:var(--muted);line-height:1.65;margin-top:2px;
+}
+.dayrow .rowmain:active strong{color:var(--accent)}
+.dayrow .handle{
+  flex:none;align-self:center;width:38px;height:38px;border-radius:10px;
+  display:grid;place-items:center;color:#C3C9CF;
+  touch-action:none;cursor:grab;
+}
+.dayrow .handle svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;fill:none}
+.dayrow .handle:active{cursor:grabbing;background:var(--accent-soft);color:var(--accent)}
+.dayrow.dragging{
+  z-index:5;box-shadow:0 12px 28px -12px rgba(52,58,65,.35);
+  border-bottom-color:transparent;border-radius:12px;transition:none;
+}
+.dayrow.dragging .handle{background:var(--accent-soft);color:var(--accent)}
+
+.linkbtn{
+  display:block;margin:2px auto 0;padding:8px 4px;
+  font-size:12.5px;color:var(--muted);text-decoration:underline;text-underline-offset:3px;
+}
+
+/* ---------- day detail ---------- */
+.dayhead{border-bottom:1px solid var(--line);padding:17px 18px 16px}
+.dstamprow{display:flex;align-items:center;gap:10px}
+.dayhead .dstamp{
+  flex:1;font-family:var(--mono);font-size:12px;color:var(--accent);letter-spacing:.08em;
+}
+.editable{
+  display:block;width:100%;border:none;background:transparent;resize:none;
+  border-radius:5px;transition:background .15s,box-shadow .15s;
+}
+.editable:focus{
+  outline:none;background:var(--accent-soft);
+  box-shadow:0 0 0 6px var(--accent-soft);
+}
+.editable::placeholder{color:#C3C9CF}
+.taginput{
+  flex:none;width:88px;text-align:center;
+  font-size:16px;padding:3px 6px;color:var(--accent);
+  background:var(--accent-soft);border-radius:999px;
+}
+.taginput:focus{box-shadow:0 0 0 3px var(--accent-soft)}
+.titleinput{
+  font-family:var(--serif);font-size:21px;font-weight:700;line-height:1.4;
+  margin-top:3px;
+}
+.outlineinput{
+  font-size:16px;line-height:1.7;color:var(--ink-soft);margin-top:6px;overflow:hidden;
+}
+.meters{display:flex;gap:18px;margin-top:14px;font-size:11px;color:var(--muted)}
+.meter{display:flex;align-items:center;gap:6px}
+.pips{display:flex;gap:1px}
+.pipbtn{padding:5px 2px;display:block;line-height:0}
+.pip{display:block;width:6px;height:6px;border-radius:50%;background:#E8E9E5}
+.pip.f{background:var(--accent-tint)}
+.pip.w{background:var(--sand)}
+
+.tipwrap{background:var(--sand-soft);border-bottom:1px solid var(--line);padding:11px 16px}
+.tipwrap .editable{
+  font-size:16px;line-height:1.7;color:#7B6437;overflow:hidden;
+}
+.tipwrap .editable:focus{background:#fff;box-shadow:0 0 0 6px #fff}
+.tipwrap .editable::placeholder{color:#BCA97F}
+
+.slot{border-bottom:1px solid var(--line-soft)}
+.slot:last-child{border-bottom:none}
+.slot label{
+  display:flex;align-items:center;gap:9px;
+  padding:14px 18px 0;font-size:12px;color:var(--muted);
+  letter-spacing:.12em;font-weight:500;
+}
+.slot label .mk{
+  font-family:var(--mono);font-size:10px;color:var(--accent);
+  background:var(--accent-soft);border-radius:5px;padding:3px 7px;letter-spacing:.06em;
+}
+.slot textarea{
+  display:block;width:100%;border:none;background:transparent;resize:none;
+  padding:7px 18px 16px;line-height:1.8;font-size:16px;overflow:hidden;
+}
+.slot textarea::placeholder{color:#BEC4CB}
+.slot textarea:focus{outline:none;background:#FBFCFA}
+
+/* ---------- forms / buttons ---------- */
+.field{margin-bottom:14px}
+.field > label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;letter-spacing:.06em}
+input[type=text]:not(.editable),input[type=number],select,textarea.box{
+  width:100%;padding:12px 14px;border:1px solid var(--line);
+  border-radius:12px;background-color:#FBFCFA;font-size:16px;
+}
+input[type=number]{font-family:var(--mono)}
+select{
+  appearance:none;-webkit-appearance:none;padding-right:36px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%23959CA4' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;background-size:11px;
+}
+input:not(.editable):focus,select:focus,textarea.box:focus{
+  outline:none;border-color:var(--accent-tint);background-color:#fff;
+  box-shadow:0 0 0 3px var(--accent-soft);
+}
+.row{display:flex;gap:10px}
+.row > *{flex:1;min-width:0}
+.row .grow2{flex:2}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  padding:13px 18px;border-radius:14px;font-size:15px;font-weight:600;
+  background:var(--accent);color:#fff;letter-spacing:.03em;
+  transition:transform .12s ease,opacity .15s;
+}
+.btn:active{opacity:.85;transform:scale(.985)}
+.btn.wide{width:100%}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);font-weight:500}
+.btn.sm{padding:9px 15px;font-size:13px;border-radius:11px}
+.btn.danger{background:#fff;color:var(--red);border:1px solid #E9D5D1;font-weight:500}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  padding:9px 16px;border:1px solid var(--line);border-radius:999px;
+  font-size:13.5px;background:#fff;color:var(--ink-soft);transition:all .15s;
+}
+.chip[aria-pressed="true"]{
+  background:var(--accent-soft);border-color:var(--accent-tint);color:var(--accent);font-weight:500;
+}
+
+/* ---------- people ---------- */
+.person{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--line-soft)}
+.person:last-child{border-bottom:none}
+.person input{border:none;padding:5px 0;flex:1;font-size:16px;background:transparent;min-width:0}
+.person input:focus{outline:none;border-bottom:1.5px solid var(--accent-tint)}
+.av{
+  width:31px;height:31px;border-radius:50%;flex:none;
+  display:grid;place-items:center;font-size:12.5px;font-weight:500;color:#fff;
+  background:linear-gradient(150deg,var(--accent-tint),var(--accent));
+}
+.x{color:#BEC4CB;font-size:20px;line-height:1;padding:0 6px}
+
+/* ---------- expenses ---------- */
+.exp{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line-soft);align-items:flex-start}
+.exp:last-child{border-bottom:none}
+.exp .info{flex:1;min-width:0}
+.exp .t{font-size:14.5px;font-weight:500}
+.exp .m{font-size:11.5px;color:var(--muted);margin-top:3px}
+.exp .amt{font-family:var(--mono);font-size:14.5px;white-space:nowrap;text-align:right}
+.exp .amt small{display:block;font-size:10.5px;color:var(--muted);font-weight:400}
+
+.bal{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--line-soft)}
+.bal:last-child{border-bottom:none}
+.bal .n{flex:1;font-size:14.5px}
+.bal .v{font-family:var(--mono);font-size:15px;font-weight:500}
+.pos{color:var(--green)}
+.neg{color:var(--red)}
+.zero{color:var(--muted)}
+
+.settle{
+  display:flex;align-items:center;gap:11px;padding:13px 0;
+  border-bottom:1px solid var(--line-soft);font-size:14px;
+}
+.settle:last-child{border-bottom:none}
+.settle .arrow{color:var(--accent-tint);font-family:var(--mono)}
+.settle .amt{margin-left:auto;font-family:var(--mono);font-weight:500}
+
+.total{
+  display:flex;justify-content:space-between;align-items:baseline;
+  padding:16px 0 0;margin-top:6px;border-top:1.5px solid var(--line);
+}
+.total .lbl{font-size:12px;color:var(--muted);letter-spacing:.1em}
+.total .v{font-family:var(--mono);font-size:25px;font-weight:500;color:var(--accent)}
+
+.empty{text-align:center;padding:28px 16px;color:var(--muted);font-size:13.5px;line-height:1.85}
+
+.kv{display:flex;justify-content:space-between;gap:12px;font-size:12.5px;color:var(--muted);padding:3px 0}
+.kv b{font-weight:500;color:var(--ink-soft);font-family:var(--mono);font-size:12px}
+
+/* ---------- tabbar ---------- */
+.tabbar{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  display:flex;background:rgba(255,255,255,.93);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-top:1px solid var(--line);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.tabbar button{
+  position:relative;
+  flex:1;padding:10px 0 11px;display:flex;flex-direction:column;align-items:center;gap:4px;
+  font-size:10.5px;letter-spacing:.08em;color:var(--muted);
+  transition:color .15s;
+}
+.tabbar button::before{
+  content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:26px;height:2.5px;border-radius:0 0 3px 3px;background:transparent;
+  transition:background .15s;
+}
+.tabbar button svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.tabbar button[aria-selected="true"]{color:var(--accent);font-weight:600}
+.tabbar button[aria-selected="true"]::before{background:var(--accent-tint)}
+
+/* ---------- savebar ---------- */
+#savebar{
+  position:fixed;left:0;right:0;z-index:55;
+  bottom:calc(var(--tabbar) + env(safe-area-inset-bottom));
+  display:flex;align-items:center;gap:10px;
+  padding:11px 14px;
+  background:var(--ink);color:#fff;
+  transform:translateY(130%);opacity:0;visibility:hidden;
+  transition:transform .24s cubic-bezier(.2,.8,.3,1),opacity .18s ease,visibility 0s .24s;
+  box-shadow:0 -8px 24px -18px rgba(0,0,0,.7);
+}
+#savebar.on{
+  transform:none;opacity:1;visibility:visible;
+  transition:transform .24s cubic-bezier(.2,.8,.3,1),opacity .18s ease,visibility 0s;
+}
+#savebar .sbtext{flex:1;min-width:0;line-height:1.4}
+#savebar .sbtext strong{display:block;font-size:13.5px;font-weight:600}
+#savebar .sbtext span{display:block;font-size:11px;color:#AEB7C2;margin-top:1px}
+#savebar .btn{background:#fff;color:var(--ink);flex:none}
+#savebar .btn.alt{background:transparent;color:#fff;border:1px solid #4E5560}
+
+/* ---------- toast ---------- */
+#toast{
+  position:fixed;left:50%;transform:translateX(-50%) translateY(12px);
+  bottom:calc(var(--tabbar) + 16px + env(safe-area-inset-bottom));
+  background:var(--ink);color:#fff;font-size:13px;padding:10px 18px;border-radius:999px;
+  box-shadow:0 12px 26px -14px rgba(52,58,65,.6);
+  opacity:0;pointer-events:none;transition:all .22s ease;z-index:99;
+  max-width:88vw;text-align:center;line-height:1.5;
+}
+#toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+body.hasbar #toast{bottom:calc(var(--tabbar) + 80px + env(safe-area-inset-bottom))}
+
+.hint{font-size:12px;color:var(--muted);line-height:1.8;margin:10px 0 0}
+.hint code{font-family:var(--mono);font-size:11.5px;background:var(--line-soft);padding:1px 5px;border-radius:4px}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="eyebrow">TSA — HND　8 DAYS</div>
+  <h1>東京行程手帳</h1>
+  <div class="sub">2026.12.04（五）— 12.11（五）・東京住 7 晚，不換飯店</div>
+</header>
+
+<div class="railwrap" id="railwrap" hidden>
+  <div class="rail" id="rail" role="tablist" aria-label="選擇日期"></div>
+</div>
+
+<main>
+  <!-- 總覽 -->
+  <section class="panel" id="p-overview" role="tabpanel">
+    <h2 class="sec">八天總覽</h2>
+    <p class="lead">點一天跳去改內容。想換順序，拖右邊的握把。</p>
+    <div class="card flush" id="daylist"></div>
+    <button class="linkbtn" id="resetOrder" hidden>還原成原始順序</button>
+
+    <h2 class="sec">看天氣再決定的順序</h2>
+    <div class="card">
+      <div id="wxrank"></div>
+      <p class="hint">出發前 7–10 天再看預報。哪天下雨，就把那天的行程拖去跟機動日對調。</p>
+    </div>
+
+    <h2 class="sec">帶什麼</h2>
+    <div class="card">
+      <p style="margin:0 0 8px;font-size:13.5px">東京白天約 10–14°C，早晚 4–7°C，體感偏乾冷。</p>
+      <p style="margin:0;font-size:13.5px;color:var(--muted)">洋蔥式穿搭最好用：發熱衣＋針織＋擋風外套，加圍巾和好走的鞋。靠海的行程風大，再多一層。</p>
+    </div>
+  </section>
+
+  <!-- 每日 -->
+  <section class="panel" id="p-days" role="tabpanel">
+    <div id="daybox"></div>
+  </section>
+
+  <!-- 分帳 -->
+  <section class="panel" id="p-split" role="tabpanel">
+    <h2 class="sec">同行的人</h2>
+    <div class="card">
+      <div id="people"></div>
+      <button class="btn ghost sm" style="margin-top:10px" id="addPerson">＋ 加一個人</button>
+    </div>
+
+    <h2 class="sec">記一筆</h2>
+    <div class="card">
+      <div class="field">
+        <label for="eTitle">花在什麼</label>
+        <input type="text" id="eTitle" placeholder="例：機場到飯店的計程車">
+      </div>
+      <div class="row">
+        <div class="field grow2">
+          <label for="eAmount">金額</label>
+          <input type="number" id="eAmount" inputmode="decimal" placeholder="300">
+        </div>
+        <div class="field">
+          <label for="eCur">幣別</label>
+          <select id="eCur"><option value="TWD">台幣</option><option value="JPY">日圓</option></select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="ePayer">誰先付的</label>
+          <select id="ePayer"></select>
+        </div>
+        <div class="field">
+          <label for="eDay">哪一天</label>
+          <select id="eDay"></select>
+        </div>
+      </div>
+      <div class="field">
+        <label>這筆誰要分</label>
+        <div class="chips" id="eWho"></div>
+      </div>
+      <button class="btn wide" id="addExp">記下來</button>
+    </div>
+
+    <h2 class="sec">誰該給誰</h2>
+    <div class="card">
+      <div id="settleBox"></div>
+    </div>
+
+    <h2 class="sec">每個人的結餘</h2>
+    <div class="card">
+      <div id="balBox"></div>
+      <div class="total"><span class="lbl">總花費（台幣）</span><span class="v" id="grand">0</span></div>
+    </div>
+
+    <h2 class="sec">所有紀錄</h2>
+    <div class="card">
+      <div id="expList"></div>
+    </div>
+
+    <h2 class="sec">日圓換算</h2>
+    <div class="card">
+      <div class="field" style="margin:0">
+        <label for="rate">1 日圓 = 幾元台幣</label>
+        <input type="number" id="rate" step="0.001" inputmode="decimal">
+      </div>
+      <p class="hint">改了匯率，上面所有日圓紀錄會一起重算。</p>
+    </div>
+  </section>
+
+  <!-- 存檔 -->
+  <section class="panel" id="p-data" role="tabpanel">
+    <h2 class="sec">存檔到網站</h2>
+    <p class="lead">會產生一份新的 index.html，覆蓋掉 GitHub 上那支再 push，其他人打開就看到你改的內容。</p>
+    <div class="card">
+      <button class="btn wide" id="doSave2">存成 index.html</button>
+      <div style="height:12px"></div>
+      <div class="kv"><span>網站上這份的存檔時間</span><b id="bakedAt">—</b></div>
+      <div class="kv"><span>你這台裝置的版本</span><b id="localAt">—</b></div>
+      <p class="hint">流程：存檔 → 下載 → 覆蓋 repo 裡的 <code>index.html</code> → push。沒 push 之前，內容只留在你自己的瀏覽器裡。</p>
+    </div>
+
+    <h2 class="sec">備份與轉移</h2>
+    <div class="card">
+      <button class="btn wide ghost" id="doExport">匯出成 JSON 備份</button>
+      <div style="height:9px"></div>
+      <button class="btn wide ghost" id="doCopy">複製成文字</button>
+      <div style="height:9px"></div>
+      <label class="btn wide ghost" for="fileIn" style="cursor:pointer">讀入備份檔</label>
+      <input type="file" id="fileIn" accept=".json,application/json" hidden>
+      <p class="hint">在 LINE 裡開網頁時，瀏覽器資料偶爾會被清掉。用手機瀏覽器（Safari／Chrome）開會比較保險。</p>
+    </div>
+
+    <h2 class="sec">貼上備份文字</h2>
+    <div class="card">
+      <div class="field">
+        <textarea class="box" id="pasteBox" rows="4" placeholder="把朋友傳給你的備份文字貼進來"></textarea>
+      </div>
+      <button class="btn wide ghost" id="doPaste">讀入這段文字</button>
+    </div>
+
+    <h2 class="sec">重來一次</h2>
+    <div class="card">
+      <button class="btn wide danger" id="doReset">清空所有填寫內容</button>
+      <p class="hint">會刪掉所有筆記、分帳紀錄，行程標題和順序也會還原成一開始的版本。</p>
+    </div>
+  </section>
+</main>
+
+<nav class="tabbar" role="tablist" aria-label="主要區塊">
+  <button data-tab="overview" role="tab" aria-selected="true">
+    <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>總覽</span></button>
+  <button data-tab="days" role="tab" aria-selected="false">
+    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>每日</span></button>
+  <button data-tab="split" role="tab" aria-selected="false">
+    <svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M17 7H9.5a2.5 2.5 0 0 0 0 5h5a2.5 2.5 0 0 1 0 5H6"/></svg><span>分帳</span></button>
+  <button data-tab="data" role="tab" aria-selected="false">
+    <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg><span>存檔</span></button>
+</nav>
+
+<div id="savebar">
+  <div class="sbtext"><strong id="sbTitle">有修改還沒存檔</strong><span id="sbSub">存檔後上傳到 GitHub，其他人才看得到</span></div>
+  <button class="btn sm alt" id="doLoadBaked" hidden>載入</button>
+  <button class="btn sm" id="doSave">存檔</button>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+/*BAKED_START*/
+const BAKED = {"savedAt":"","data":null};
+/*BAKED_END*/
+
+/* ===== 日期格（照日曆固定，不會變） ===== */
+const DATES = [
+  {id:"12-04", dd:"12/4",  wd:"五"},
+  {id:"12-05", dd:"12/5",  wd:"六"},
+  {id:"12-06", dd:"12/6",  wd:"日"},
+  {id:"12-07", dd:"12/7",  wd:"一"},
+  {id:"12-08", dd:"12/8",  wd:"二"},
+  {id:"12-09", dd:"12/9",  wd:"三"},
+  {id:"12-10", dd:"12/10", wd:"四"},
+  {id:"12-11", dd:"12/11", wd:"五"}
+];
+
+/* ===== 行程預設值。實際內容存在 S.plans，可以改、可以搬 ===== */
+const PLAN_DEFAULTS = [
+  {id:"p-arrive", tag:"抵達", title:"抵達東京",
+   outline:"TSA → HND，進市區入住。晚上在飯店附近吃飯，順路看聖誕燈飾。", tip:"", load:1, wx:1},
+  {id:"p-atami", tag:"熱海", title:"熱海一日遊",
+   outline:"海岸線 → 來宮神社 → 海鮮 → MOA 美術館 → 溫泉。下雨也有室內備案。", load:3, wx:3,
+   tip:"MOA 美術館週四休館，排的時候避開週四。開館 9:30–16:30，16:00 最後入館。"},
+  {id:"p-kamakura", tag:"鎌倉", title:"鎌倉＋江之島",
+   outline:"鎌倉大佛 → 長谷寺 → 小町通 → 鶴岡八幡宮 → 江之電 → 江之島。", load:4, wx:4,
+   tip:"下雨的話，把這天跟機動日對調。天氣好就留到傍晚看海。"},
+  {id:"p-shop1", tag:"購物", title:"市區購物 Day 1",
+   outline:"新宿 → 表參道 → 澀谷。精品、美妝、服飾、百貨。", tip:"", load:3, wx:1},
+  {id:"p-free", tag:"自由", title:"自由活動／機動日",
+   outline:"聖誕景點、美術館、咖啡店，或把前面下雨錯過的補回來。彈性最大的一天。", load:2, wx:2,
+   tip:"這天空著是刻意的。哪天天氣不好，就在總覽把那天的行程拖過來。"},
+  {id:"p-disney", tag:"迪士尼", title:"東京迪士尼樂園",
+   outline:"全天待在園區，不安排其他景點。營運時間 09:00–21:00。", load:5, wx:3,
+   tip:"當天有個別設施休止（瑞士家庭樹屋、灰姑娘的童話大廳等），樂園本身正常營運。"},
+  {id:"p-shop2", tag:"購物", title:"市區購物 Day 2",
+   outline:"銀座 → 東京站 → 秋葉原。伴手禮、食品、最後補貨。", tip:"", load:3, wx:1},
+  {id:"p-return", tag:"回程", title:"回程",
+   outline:"上午早餐、最後採買，整理行李，之後前往羽田。HND → TSA。", tip:"", load:1, wx:1}
+];
+const SLOTS = [
+  {k:"am", label:"早", mk:"AM", ph:"幾點出門、早餐吃哪、第一站"},
+  {k:"pm", label:"中", mk:"PM", ph:"主要景點、午餐、有沒有訂位"},
+  {k:"ni", label:"晚", mk:"NIGHT", ph:"晚餐、夜景、幾點回飯店"}
+];
+const PLAN_IDS = PLAN_DEFAULTS.map(p => p.id);
+/* 舊版把筆記存在日期底下，這張表用來搬到行程底下 */
+const OLD_NOTE_KEY = {
+  "12-04":"p-arrive","12-05":"p-atami","12-06":"p-kamakura","12-07":"p-shop1",
+  "12-08":"p-free","12-09":"p-disney","12-10":"p-shop2","12-11":"p-return"
+};
+
+/* ===== 狀態 ===== */
+const KEY = "tokyo-2026-12";
+const DEFAULT = {
+  v:3, savedAt:"",
+  members:[{id:"m1",name:"我"},{id:"m2",name:"朋友 A"},{id:"m3",name:"朋友 B"}],
+  plans: structuredClone(PLAN_DEFAULTS),
+  notes:{}, expenses:[], rate:0.21, order:[...PLAN_IDS]
+};
+let S = load();
+let curIdx = 0;
+let curTab = "overview";
+let selWho = null;
+let published = "";
+
+function fields(x){
+  return JSON.stringify({
+    members:x.members, plans:x.plans, notes:x.notes,
+    expenses:x.expenses, rate:x.rate, order:x.order
+  });
+}
+function migrate(raw){
+  const d = {...structuredClone(DEFAULT), ...structuredClone(raw)};
+  if(!d.v || d.v < 2){
+    const n = {};
+    Object.entries(d.notes || {}).forEach(([k,v])=>{
+      const pid = OLD_NOTE_KEY[k];
+      if(pid) n[pid] = v;
+    });
+    d.notes = n;
+    d.order = [...PLAN_IDS];
+  }
+  d.v = 3;
+  /* 行程：以預設為底，套用存過的內容；預設沒有的 id 一律丟掉 */
+  const saved = Array.isArray(d.plans) ? d.plans : [];
+  d.plans = PLAN_DEFAULTS.map(def=>{
+    const s = saved.find(p => p && p.id === def.id) || {};
+    return {
+      id: def.id,
+      tag: typeof s.tag === "string" ? s.tag : def.tag,
+      title: typeof s.title === "string" ? s.title : def.title,
+      outline: typeof s.outline === "string" ? s.outline : def.outline,
+      tip: typeof s.tip === "string" ? s.tip : (def.tip || ""),
+      load: Number.isFinite(s.load) ? s.load : def.load,
+      wx: Number.isFinite(s.wx) ? s.wx : def.wx
+    };
+  });
+  const seen = new Set();
+  d.order = (Array.isArray(d.order) ? d.order : [])
+    .filter(id => PLAN_IDS.includes(id) && !seen.has(id) && (seen.add(id), true));
+  PLAN_IDS.forEach(id => { if(!d.order.includes(id)) d.order.push(id); });
+  return d;
+}
+function load(){
+  const baked = BAKED.data ? migrate(BAKED.data) : structuredClone(DEFAULT);
+  if(BAKED.savedAt) baked.savedAt = BAKED.savedAt;
+  let local = null;
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(raw) local = migrate(JSON.parse(raw));
+  }catch(e){ local = null; }
+  return local || baked;
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(S)); }
+  catch(e){ toast("存不進瀏覽器，空間可能滿了"); }
+  updateBar();
+}
+const $ = s => document.querySelector(s);
+const el = (t,c) => { const n=document.createElement(t); if(c) n.className=c; return n; };
+let tt;
+function toast(msg){
+  const t = $("#toast"); t.textContent = msg; t.classList.add("on");
+  clearTimeout(tt); tt = setTimeout(()=>t.classList.remove("on"), 2600);
+}
+const money = n => Math.round(n).toLocaleString("en-US");
+const nameOf = id => (S.members.find(m=>m.id===id)||{}).name || "（已刪除）";
+const initial = s => (s||"?").trim().charAt(0) || "?";
+const planOf = i => S.plans.find(p => p.id === S.order[i]) || S.plans[0];
+const titleOf = p => (p.title || "").trim() || "（還沒填）";
+const fmtTime = iso => {
+  if(!iso) return "—";
+  const d = new Date(iso);
+  if(isNaN(d)) return "—";
+  const p = n => String(n).padStart(2,"0");
+  return `${d.getFullYear()}/${p(d.getMonth()+1)}/${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+};
+
+/* ===== 存檔提示列 ===== */
+function updateBar(){
+  const dirty = fields(S) !== published;
+  const newer = !!(BAKED.savedAt && (!S.savedAt || BAKED.savedAt > S.savedAt));
+  const show = dirty || newer;
+  $("#savebar").classList.toggle("on", show);
+  document.body.classList.toggle("hasbar", show);
+  $("#doLoadBaked").hidden = !newer;
+  $("#doSave").hidden = !dirty;
+  if(newer && !dirty){
+    $("#sbTitle").textContent = "網站上有比較新的版本";
+    $("#sbSub").textContent = fmtTime(BAKED.savedAt) + " 有人存過檔";
+  }else if(newer && dirty){
+    $("#sbTitle").textContent = "你有修改，網站上也有新版本";
+    $("#sbSub").textContent = "載入會蓋掉你手上的內容，先存檔比較保險";
+  }else{
+    $("#sbTitle").textContent = "有修改還沒存檔";
+    $("#sbSub").textContent = "存檔後上傳到 GitHub，其他人才看得到";
+  }
+  $("#bakedAt").textContent = fmtTime(BAKED.savedAt);
+  $("#localAt").textContent = fmtTime(S.savedAt);
+  $("#resetOrder").hidden = (S.order.join() === PLAN_IDS.join());
+}
+
+/* ===== 產生新的 index.html ===== */
+function snapshotHTML(){
+  const clone = document.documentElement.cloneNode(true);
+  const q = s => clone.querySelector(s);
+  ["#rail","#daylist","#wxrank","#daybox","#people","#ePayer","#eDay","#eWho","#settleBox","#balBox","#expList"]
+    .forEach(s => { const n = q(s); if(n) n.innerHTML = ""; });
+  const g = q("#grand"); if(g) g.textContent = "0";
+  const t = q("#toast"); if(t){ t.textContent = ""; t.className = ""; }
+  const rw = q("#railwrap"); if(rw) rw.setAttribute("hidden","");
+  const ro = q("#resetOrder"); if(ro) ro.setAttribute("hidden","");
+  ["#bakedAt","#localAt"].forEach(s => { const n = q(s); if(n) n.textContent = "—"; });
+  const sb = q("#savebar"); if(sb) sb.classList.remove("on");
+  const lb = q("#doLoadBaked"); if(lb) lb.setAttribute("hidden","");
+  const ds = q("#doSave"); if(ds) ds.removeAttribute("hidden");
+  clone.querySelectorAll(".panel").forEach(p => p.classList.remove("on"));
+  clone.querySelectorAll(".tabbar button").forEach(b =>
+    b.setAttribute("aria-selected", String(b.dataset.tab === "overview")));
+  const body = clone.querySelector("body");
+  if(body) body.className = "";
+  clone.querySelectorAll('[class=""]').forEach(n => n.removeAttribute("class"));
+
+  const A = "/*BAKED" + "_START*/", B = "/*BAKED" + "_END*/";
+  const html = "<!DOCTYPE html>\n" + clone.outerHTML;
+  const i = html.indexOf(A), j = html.indexOf(B);
+  if(i < 0 || j < 0 || j < i) return null;
+  const json = JSON.stringify({
+    savedAt: S.savedAt,
+    data: {v:3, members:S.members, plans:S.plans, notes:S.notes,
+           expenses:S.expenses, rate:S.rate, order:S.order}
+  }).replace(/</g, "\\u003C");
+  return html.slice(0, i + A.length) + "\nconst BAKED = " + json + ";\n" + html.slice(j);
+}
+function doPublish(){
+  const prev = S.savedAt;
+  S.savedAt = new Date().toISOString();
+  const html = snapshotHTML();
+  if(!html){ S.savedAt = prev; toast("產生檔案失敗，請改用 JSON 備份"); return; }
+  try{
+    const blob = new Blob([html], {type:"text/html;charset=utf-8"});
+    const a = el("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "index.html";
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+  }catch(e){ S.savedAt = prev; toast("下載失敗"); return; }
+  published = fields(S);
+  save();
+  toast("已下載 index.html，覆蓋 GitHub 上那支再 push 就完成");
+}
+$("#doSave").addEventListener("click", doPublish);
+$("#doSave2").addEventListener("click", doPublish);
+$("#doLoadBaked").addEventListener("click", ()=>{
+  if(!BAKED.data) return;
+  if(!confirm("載入網站上的版本？你目前手上的內容會被蓋掉。")) return;
+  S = migrate(BAKED.data);
+  S.savedAt = BAKED.savedAt;
+  selWho = null; published = fields(S);
+  save(); renderAll();
+  toast("已載入網站版本");
+});
+
+/* ===== 分頁 ===== */
+function setTab(t){
+  curTab = t;
+  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("on"));
+  $("#p-"+t).classList.add("on");
+  document.querySelectorAll(".tabbar button").forEach(b=>
+    b.setAttribute("aria-selected", String(b.dataset.tab===t)));
+  $("#railwrap").hidden = (t !== "days");
+  window.scrollTo({top:0});
+  if(t==="split") renderSplit();
+}
+document.querySelectorAll(".tabbar button").forEach(b=>
+  b.addEventListener("click", ()=>setTab(b.dataset.tab)));
+
+/* ===== 日期軌道 ===== */
+function renderRail(){
+  const r = $("#rail"); r.innerHTML = "";
+  DATES.forEach((d,i)=>{
+    const p = planOf(i);
+    const b = el("button","stop");
+    b.setAttribute("role","tab");
+    b.setAttribute("aria-selected", String(i===curIdx));
+    b.innerHTML = `<span class="wd">${d.wd}</span><span class="dot"></span>
+      <span class="dd">${d.dd}</span><span class="tag"></span>`;
+    b.querySelector(".tag").textContent = p.tag || "—";
+    b.addEventListener("click", ()=>goDay(i));
+    r.appendChild(b);
+  });
+  const act = r.children[curIdx];
+  if(act) act.scrollIntoView({block:"nearest", inline:"center", behavior:"smooth"});
+}
+function goDay(i){
+  curIdx = i;
+  setTab("days");
+  renderRail();
+  renderDay();
+}
+
+/* ===== 每日：全部可編輯 ===== */
+function autosize(ta){ ta.style.height="auto"; ta.style.height = (ta.scrollHeight+2)+"px"; }
+
+function renderDay(){
+  const d = DATES[curIdx], p = planOf(curIdx);
+  const box = $("#daybox"); box.innerHTML = "";
+
+  const card = el("div","card flush");
+  const head = el("div","dayhead");
+
+  const stamprow = el("div","dstamprow");
+  const stamp = el("div","dstamp");
+  stamp.textContent = `2026.${d.dd.replace("/",".")}（${d.wd}）`;
+  const tagIn = el("input","editable taginput");
+  tagIn.type = "text"; tagIn.value = p.tag; tagIn.maxLength = 6;
+  tagIn.placeholder = "標籤";
+  tagIn.setAttribute("aria-label","日期軌道上顯示的短標籤");
+  tagIn.addEventListener("input", ()=>{ p.tag = tagIn.value; save(); renderRail(); });
+  stamprow.appendChild(stamp); stamprow.appendChild(tagIn);
+  head.appendChild(stamprow);
+
+  const titleIn = el("input","editable titleinput");
+  titleIn.type = "text"; titleIn.value = p.title;
+  titleIn.placeholder = "這天要做什麼";
+  titleIn.setAttribute("aria-label","這天的標題");
+  titleIn.addEventListener("input", ()=>{ p.title = titleIn.value; save(); });
+  titleIn.addEventListener("blur", ()=>{ renderOverview(); });
+  head.appendChild(titleIn);
+
+  const olIn = el("textarea","editable outlineinput");
+  olIn.rows = 2; olIn.value = p.outline;
+  olIn.placeholder = "大致的路線或安排（可留空）";
+  olIn.setAttribute("aria-label","這天的行程大綱");
+  olIn.addEventListener("input", ()=>{ autosize(olIn); p.outline = olIn.value; save(); });
+  olIn.addEventListener("blur", ()=>{ renderOverview(); });
+  head.appendChild(olIn);
+  requestAnimationFrame(()=>autosize(olIn));
+
+  const meters = el("div","meters");
+  meters.appendChild(pips("行程強度", p.load, "f", v=>{ p.load = v; save(); renderDay(); }));
+  meters.appendChild(pips("看天氣", p.wx, "w", v=>{ p.wx = v; save(); renderDay(); renderOverview(); }));
+  head.appendChild(meters);
+  card.appendChild(head);
+
+  const tipWrap = el("div","tipwrap");
+  const tipIn = el("textarea","editable");
+  tipIn.rows = 1; tipIn.value = p.tip || "";
+  tipIn.placeholder = "這天要特別注意什麼？休館日、訂位、天氣（可留空）";
+  tipIn.setAttribute("aria-label","這天的提醒");
+  tipIn.addEventListener("input", ()=>{ autosize(tipIn); p.tip = tipIn.value; save(); });
+  tipWrap.appendChild(tipIn);
+  card.appendChild(tipWrap);
+  requestAnimationFrame(()=>autosize(tipIn));
+
+  SLOTS.forEach(s=>{
+    const wrap = el("div","slot");
+    const lb = el("label"); lb.setAttribute("for","ta-"+s.k);
+    lb.innerHTML = `<span class="mk">${s.mk}</span>${s.label}`;
+    const ta = el("textarea"); ta.id = "ta-"+s.k; ta.rows = 2; ta.placeholder = s.ph;
+    ta.value = (S.notes[p.id] && S.notes[p.id][s.k]) || "";
+    ta.addEventListener("input", ()=>{
+      autosize(ta);
+      S.notes[p.id] = S.notes[p.id] || {};
+      S.notes[p.id][s.k] = ta.value;
+      save();
+    });
+    wrap.appendChild(lb); wrap.appendChild(ta); card.appendChild(wrap);
+    requestAnimationFrame(()=>autosize(ta));
+  });
+  box.appendChild(card);
+
+  const nav = el("div","row"); nav.style.marginTop = "4px";
+  const prev = el("button","btn ghost"); prev.textContent = "← 前一天";
+  prev.disabled = curIdx===0; prev.style.opacity = curIdx===0?".4":"1";
+  prev.addEventListener("click", ()=>goDay(curIdx-1));
+  const next = el("button","btn ghost"); next.textContent = "後一天 →";
+  next.disabled = curIdx===DATES.length-1; next.style.opacity = curIdx===DATES.length-1?".4":"1";
+  next.addEventListener("click", ()=>goDay(curIdx+1));
+  nav.appendChild(prev); nav.appendChild(next);
+  box.appendChild(nav);
+
+  const h = el("p","hint"); h.style.textAlign = "center";
+  h.textContent = "標題、標籤、大綱、提醒都可以直接點著改。";
+  box.appendChild(h);
+}
+function pips(label, n, cls, onSet){
+  const m = el("div","meter");
+  const t = el("span"); t.textContent = label;
+  const p = el("div","pips");
+  for(let i=1;i<=5;i++){
+    const dot = el("span","pip" + (i<=n?" "+cls:""));
+    if(onSet){
+      const b = el("button","pipbtn");
+      b.type = "button";
+      b.setAttribute("aria-label", `${label} 設成 ${i}`);
+      b.appendChild(dot);
+      b.addEventListener("click", ()=>onSet(i));
+      p.appendChild(b);
+    }else{
+      p.appendChild(dot);
+    }
+  }
+  m.appendChild(t); m.appendChild(p); return m;
+}
+const noteCount = pid => {
+  const n = S.notes[pid];
+  return n ? SLOTS.filter(s => (n[s.k]||"").trim()).length : 0;
+};
+
+/* ===== 總覽（可拖曳排序） ===== */
+function renderOverview(){
+  const list = $("#daylist"); list.innerHTML = "";
+  DATES.forEach((d,i)=>{
+    const p = planOf(i);
+    const row = el("div","dayrow");
+    row.dataset.i = i;
+
+    const dt = el("div","rowdate");
+    dt.innerHTML = `<span class="dd">${d.dd}</span><span class="wd">${d.wd}</span>`;
+
+    const main = el("button","rowmain");
+    const st = el("strong"); st.textContent = titleOf(p);
+    const ol = el("span","ol"); ol.textContent = p.outline;
+    main.appendChild(st); main.appendChild(ol);
+    main.addEventListener("click", ()=>goDay(i));
+
+    const h = el("button","handle");
+    h.setAttribute("aria-label", `拖曳搬動「${titleOf(p)}」`);
+    h.innerHTML = `<svg viewBox="0 0 16 16"><path d="M2.5 5.5h11M2.5 10.5h11"/></svg>`;
+    h.addEventListener("pointerdown", e => startDrag(e, i, h));
+
+    row.appendChild(dt); row.appendChild(main); row.appendChild(h);
+    list.appendChild(row);
+  });
+
+  const wx = $("#wxrank"); wx.innerHTML = "";
+  const rank = DATES.map((d,i)=>({d, p:planOf(i)}))
+    .filter(x => x.p.wx >= 2)
+    .sort((a,b)=> b.p.wx - a.p.wx);
+  if(!rank.length){
+    wx.innerHTML = '<div class="empty">目前沒有特別看天氣的行程。<br>在每日頁點「看天氣」的圓點可以調。</div>';
+  }else{
+    rank.forEach(x=>{
+      const row = el("div","bal");
+      const n = el("div","n"); n.textContent = `${x.d.dd} ${titleOf(x.p)}`;
+      row.appendChild(n); row.appendChild(pips("", x.p.wx, "w"));
+      wx.appendChild(row);
+    });
+  }
+}
+
+/* ===== 拖曳 ===== */
+let drag = null;
+function startDrag(e, i, handle){
+  if(drag) return;
+  e.preventDefault();
+  const rows = [...$("#daylist").querySelectorAll(".dayrow")];
+  const sy = window.scrollY;
+  const rects = rows.map(r=>{
+    const b = r.getBoundingClientRect();
+    return {top:b.top + sy, h:b.height};
+  });
+  drag = {i, target:i, rows, rects, startY:e.pageY, dy:0, h:rects[i].h, dir:0};
+  try{ handle.setPointerCapture(e.pointerId); }catch(err){}
+  window.addEventListener("pointermove", moveDrag, {passive:false});
+  window.addEventListener("pointerup", endDrag);
+  window.addEventListener("pointercancel", endDrag);
+  rows[i].classList.add("dragging");
+  document.body.classList.add("dragging-on");
+  requestAnimationFrame(scrollTick);
+}
+function layoutDrag(){
+  const {i, rows, rects, dy, h} = drag;
+  const center = rects[i].top + dy + rects[i].h/2;
+  let t = i;
+  for(let k=0;k<rows.length;k++){
+    if(k===i) continue;
+    const mid = rects[k].top + rects[k].h/2;
+    if(k<i && center < mid) t = Math.min(t,k);
+    if(k>i && center > mid) t = Math.max(t,k);
+  }
+  drag.target = t;
+  rows.forEach((r,k)=>{
+    if(k===i){ r.style.transform = `translateY(${dy}px)`; return; }
+    let off = 0;
+    if(t>i && k>i && k<=t) off = -h;
+    else if(t<i && k>=t && k<i) off = h;
+    r.style.transform = off ? `translateY(${off}px)` : "";
+  });
+}
+function moveDrag(e){
+  if(!drag) return;
+  e.preventDefault();
+  drag.dy = e.pageY - drag.startY;
+  const top = 96, bot = window.innerHeight - 130;
+  drag.dir = e.clientY < top ? Math.max(-14, (e.clientY - top)/5)
+           : e.clientY > bot ? Math.min(14, (e.clientY - bot)/5) : 0;
+  layoutDrag();
+}
+function scrollTick(){
+  if(!drag) return;
+  if(drag.dir){
+    const before = window.scrollY;
+    window.scrollBy(0, drag.dir);
+    drag.dy += window.scrollY - before;
+    layoutDrag();
+  }
+  requestAnimationFrame(scrollTick);
+}
+function endDrag(){
+  window.removeEventListener("pointermove", moveDrag, {passive:false});
+  window.removeEventListener("pointerup", endDrag);
+  window.removeEventListener("pointercancel", endDrag);
+  if(!drag) return;
+  const {i, target, rows} = drag;
+  rows.forEach(r=>{ r.style.transform = ""; r.classList.remove("dragging"); });
+  document.body.classList.remove("dragging-on");
+  drag = null;
+  if(target === i) return;
+  const [id] = S.order.splice(i, 1);
+  S.order.splice(target, 0, id);
+  save();
+  renderOverview(); renderRail(); renderDay(); renderExpForm();
+  const p = S.plans.find(x=>x.id===id), n = noteCount(id);
+  toast(`「${titleOf(p)}」搬到 ${DATES[target].dd}` + (n ? `，${n} 則筆記一起搬過去` : ""));
+}
+$("#resetOrder").addEventListener("click", ()=>{
+  S.order = [...PLAN_IDS];
+  save();
+  renderOverview(); renderRail(); renderDay(); renderExpForm();
+  toast("順序還原了");
+});
+
+/* ===== 分帳 ===== */
+function toTWD(e){ return e.cur === "JPY" ? e.amount * (Number(S.rate)||0) : e.amount; }
+
+function balances(){
+  const b = {}; S.members.forEach(m => b[m.id] = 0);
+  S.expenses.forEach(e=>{
+    const amt = toTWD(e);
+    const who = e.who.filter(id => b.hasOwnProperty(id));
+    if(!who.length) return;
+    if(b.hasOwnProperty(e.payer)) b[e.payer] += amt;
+    const each = amt / who.length;
+    who.forEach(id => b[id] -= each);
+  });
+  return b;
+}
+function settlements(b){
+  const debt = [], cred = [];
+  Object.entries(b).forEach(([id,v])=>{
+    const r = Math.round(v);
+    if(r < 0) debt.push({id, v:-r});
+    else if(r > 0) cred.push({id, v:r});
+  });
+  debt.sort((x,y)=>y.v-x.v); cred.sort((x,y)=>y.v-x.v);
+  const out = []; let i=0, j=0;
+  while(i<debt.length && j<cred.length){
+    const pay = Math.min(debt[i].v, cred[j].v);
+    if(pay > 0) out.push({from:debt[i].id, to:cred[j].id, amt:pay});
+    debt[i].v -= pay; cred[j].v -= pay;
+    if(debt[i].v <= 0) i++;
+    if(cred[j].v <= 0) j++;
+  }
+  return out;
+}
+
+function renderPeople(){
+  const box = $("#people"); box.innerHTML = "";
+  S.members.forEach(m=>{
+    const row = el("div","person");
+    const av = el("div","av"); av.textContent = initial(m.name);
+    const inp = el("input"); inp.type = "text"; inp.value = m.name;
+    inp.setAttribute("aria-label","名字");
+    inp.addEventListener("input", ()=>{
+      m.name = inp.value; av.textContent = initial(m.name); save();
+      renderExpForm(); renderResults();
+    });
+    row.appendChild(av); row.appendChild(inp);
+    if(S.members.length > 2){
+      const x = el("button","x"); x.textContent = "×"; x.title = "移除";
+      x.setAttribute("aria-label","移除 " + m.name);
+      x.addEventListener("click", ()=>{
+        if(!confirm(`把「${m.name}」移除？他名下的紀錄會一起刪掉。`)) return;
+        S.members = S.members.filter(p=>p.id!==m.id);
+        S.expenses = S.expenses.filter(e=>e.payer!==m.id);
+        S.expenses.forEach(e=> e.who = e.who.filter(id=>id!==m.id));
+        S.expenses = S.expenses.filter(e=>e.who.length);
+        selWho = null; save(); renderSplit();
+      });
+      row.appendChild(x);
+    }
+    box.appendChild(row);
+  });
+}
+$("#addPerson").addEventListener("click", ()=>{
+  S.members.push({id:"m"+Date.now(), name:"新成員"});
+  selWho = null; save(); renderSplit();
+});
+
+function renderExpForm(){
+  const payer = $("#ePayer"), keepP = payer.value;
+  payer.innerHTML = "";
+  S.members.forEach(m=>{
+    const o = el("option"); o.value = m.id; o.textContent = m.name; payer.appendChild(o);
+  });
+  if([...payer.options].some(o=>o.value===keepP)) payer.value = keepP;
+
+  const day = $("#eDay"), keepD = day.value || DATES[curIdx].id;
+  day.innerHTML = "";
+  const o0 = el("option"); o0.value = ""; o0.textContent = "不指定"; day.appendChild(o0);
+  DATES.forEach((d,i)=>{
+    const o = el("option"); o.value = d.id;
+    o.textContent = `${d.dd} ${planOf(i).tag}`.trim();
+    day.appendChild(o);
+  });
+  if([...day.options].some(o=>o.value===keepD)) day.value = keepD;
+
+  if(!selWho) selWho = new Set(S.members.map(m=>m.id));
+  const who = $("#eWho"); who.innerHTML = "";
+  S.members.forEach(m=>{
+    const c = el("button","chip");
+    c.type = "button"; c.textContent = m.name;
+    c.setAttribute("aria-pressed", String(selWho.has(m.id)));
+    c.addEventListener("click", ()=>{
+      selWho.has(m.id) ? selWho.delete(m.id) : selWho.add(m.id);
+      c.setAttribute("aria-pressed", String(selWho.has(m.id)));
+    });
+    who.appendChild(c);
+  });
+}
+
+$("#addExp").addEventListener("click", ()=>{
+  const title = $("#eTitle").value.trim();
+  const amount = parseFloat($("#eAmount").value);
+  if(!(amount > 0)) return toast("填一個大於 0 的金額");
+  const who = [...selWho].filter(id=>S.members.some(m=>m.id===id));
+  if(!who.length) return toast("至少選一個人分攤");
+  S.expenses.unshift({
+    id:"e"+Date.now(),
+    title: title || "未命名支出",
+    amount, cur: $("#eCur").value,
+    payer: $("#ePayer").value,
+    day: $("#eDay").value,
+    who
+  });
+  save();
+  $("#eTitle").value = ""; $("#eAmount").value = "";
+  renderResults();
+  toast("記好了");
+});
+
+function renderExpList(){
+  const box = $("#expList"); box.innerHTML = "";
+  if(!S.expenses.length){
+    box.innerHTML = '<div class="empty">還沒有任何紀錄。<br>誰先付了錢，就在上面記一筆。</div>';
+    return;
+  }
+  S.expenses.forEach(e=>{
+    const row = el("div","exp");
+    const info = el("div","info");
+    const d = DATES.find(x=>x.id===e.day);
+    const shares = e.who.length === S.members.length ? "全部人分" : e.who.map(nameOf).join("、") + " 分";
+    info.innerHTML = `<div class="t"></div><div class="m"></div>`;
+    info.querySelector(".t").textContent = e.title;
+    info.querySelector(".m").textContent =
+      `${d ? d.dd + "　" : ""}${nameOf(e.payer)} 付　·　${shares}`;
+    const amt = el("div","amt");
+    amt.innerHTML = e.cur === "JPY"
+      ? `¥${money(e.amount)}<small>≈ NT$${money(toTWD(e))}</small>`
+      : `NT$${money(e.amount)}`;
+    const x = el("button","x"); x.textContent = "×";
+    x.setAttribute("aria-label","刪除 " + e.title);
+    x.addEventListener("click", ()=>{
+      S.expenses = S.expenses.filter(y=>y.id!==e.id); save(); renderResults(); toast("刪掉了");
+    });
+    row.appendChild(info); row.appendChild(amt); row.appendChild(x);
+    box.appendChild(row);
+  });
+}
+
+function renderResults(){
+  const b = balances();
+
+  const sb = $("#settleBox"); sb.innerHTML = "";
+  const st = settlements(b);
+  if(!st.length){
+    sb.innerHTML = S.expenses.length
+      ? '<div class="empty">目前打平，沒有人要給誰。</div>'
+      : '<div class="empty">記了第一筆之後，這裡會告訴你誰該給誰多少。</div>';
+  }else{
+    st.forEach(s=>{
+      const row = el("div","settle");
+      const av = el("div","av"); av.textContent = initial(nameOf(s.from));
+      const txt = el("span");
+      txt.innerHTML = `<strong></strong> <span class="arrow">→</span> <span class="to"></span>`;
+      txt.querySelector("strong").textContent = nameOf(s.from);
+      txt.querySelector(".to").textContent = nameOf(s.to);
+      const amt = el("span","amt"); amt.textContent = "NT$" + money(s.amt);
+      row.appendChild(av); row.appendChild(txt); row.appendChild(amt);
+      sb.appendChild(row);
+    });
+  }
+
+  const bb = $("#balBox"); bb.innerHTML = "";
+  S.members.forEach(m=>{
+    const v = Math.round(b[m.id] || 0);
+    const row = el("div","bal");
+    const av = el("div","av"); av.textContent = initial(m.name);
+    const n = el("div","n"); n.textContent = m.name;
+    const val = el("div","v " + (v>0?"pos":v<0?"neg":"zero"));
+    val.textContent = (v>0 ? "+NT$" + money(v) : v<0 ? "−NT$" + money(Math.abs(v)) : "NT$0");
+    row.appendChild(av); row.appendChild(n); row.appendChild(val);
+    bb.appendChild(row);
+  });
+
+  const grand = S.expenses.reduce((a,e)=>a+toTWD(e), 0);
+  $("#grand").textContent = "NT$" + money(grand);
+
+  renderExpList();
+}
+
+function renderSplit(){
+  $("#rate").value = S.rate;
+  renderPeople(); renderExpForm(); renderResults();
+}
+$("#rate").addEventListener("input", e=>{
+  const v = parseFloat(e.target.value);
+  S.rate = isNaN(v) ? 0 : v; save(); renderResults();
+});
+
+/* ===== JSON 備份 ===== */
+function payload(){ return JSON.stringify({v:3, app:KEY, data:S}, null, 2); }
+function applyImport(text){
+  try{
+    const p = JSON.parse(text);
+    const d = p.data || p;
+    if(!d.members || !Array.isArray(d.members)) throw 0;
+    S = migrate(d);
+    selWho = null; save(); renderAll();
+    toast("讀入完成");
+  }catch(e){ toast("這段內容看起來不是備份檔"); }
+}
+$("#doExport").addEventListener("click", ()=>{
+  const blob = new Blob([payload()], {type:"application/json"});
+  const a = el("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "tokyo-2026-12.json";
+  a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+  toast("已匯出");
+});
+$("#doCopy").addEventListener("click", async ()=>{
+  try{ await navigator.clipboard.writeText(payload()); toast("已複製，可以貼到 LINE"); }
+  catch(e){ $("#pasteBox").value = payload(); toast("複製失敗，內容放到下方框裡了"); }
+});
+$("#fileIn").addEventListener("change", e=>{
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = () => applyImport(r.result);
+  r.readAsText(f);
+  e.target.value = "";
+});
+$("#doPaste").addEventListener("click", ()=>{
+  const t = $("#pasteBox").value.trim();
+  if(!t) return toast("先把備份文字貼進來");
+  applyImport(t);
+});
+$("#doReset").addEventListener("click", ()=>{
+  if(!confirm("所有筆記、分帳紀錄、改過的標題都會還原，確定？")) return;
+  S = structuredClone(DEFAULT); selWho = null; save(); renderAll();
+  toast("已清空");
+});
+
+/* ===== 啟動 ===== */
+function renderAll(){
+  renderOverview(); renderRail(); renderDay(); renderSplit(); updateBar();
+}
+published = fields(BAKED.data ? migrate(BAKED.data) : structuredClone(DEFAULT));
+renderAll();
+setTab("overview");
+</script>
+</body>
+</html>
