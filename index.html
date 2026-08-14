@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
+<html lang="zh-Hant"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>東京 2026.12.04–12.11 行程手帳</title>
@@ -11,8 +10,8 @@
 <meta name="theme-color" content="#E9EFF4">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&amp;family=Noto+Serif+TC:wght@600;700&amp;family=Roboto+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
 
 <style>
 :root{
@@ -408,7 +407,7 @@ body.hasbar #toast{bottom:calc(var(--tabbar) + 80px + env(safe-area-inset-bottom
   <div class="sub">2026.12.04（五）— 12.11（五）・東京住 7 晚，不換飯店</div>
 </header>
 
-<div class="railwrap" id="railwrap" hidden>
+<div class="railwrap" id="railwrap" hidden="">
   <div class="rail" id="rail" role="tablist" aria-label="選擇日期"></div>
 </div>
 
@@ -418,7 +417,7 @@ body.hasbar #toast{bottom:calc(var(--tabbar) + 80px + env(safe-area-inset-bottom
     <h2 class="sec">八天總覽</h2>
     <p class="lead">點一天跳去改內容。想換順序，拖右邊的握把。</p>
     <div class="card flush" id="daylist"></div>
-    <button class="linkbtn" id="resetOrder" hidden>還原成原始順序</button>
+    <button class="linkbtn" id="resetOrder" hidden="">還原成原始順序</button>
 
     <h2 class="sec">看天氣再決定的順序</h2>
     <div class="card">
@@ -510,9 +509,9 @@ body.hasbar #toast{bottom:calc(var(--tabbar) + 80px + env(safe-area-inset-bottom
     <h2 class="sec">存檔到網站</h2>
     <p class="lead">存檔會直接寫回 GitHub，其他人重新整理就看到你改的內容。</p>
     <div class="card">
-      <button class="btn wide" id="doSave2">存到 GitHub</button>
+      <button class="btn wide" id="doSave2" disabled="" style="opacity: 0.6;">存到 GitHub</button>
       <div style="height:9px"></div>
-      <button class="btn wide ghost" id="doDownload">改用下載 index.html</button>
+      <button class="btn wide ghost" id="doDownload" disabled="" style="opacity: 0.6;">改用下載 index.html</button>
       <div style="height:12px"></div>
       <div class="kv"><span>網站上這份的存檔時間</span><b id="bakedAt">—</b></div>
       <div class="kv"><span>你這台裝置的版本</span><b id="localAt">—</b></div>
@@ -524,19 +523,16 @@ body.hasbar #toast{bottom:calc(var(--tabbar) + 80px + env(safe-area-inset-bottom
     <div class="card">
       <div class="field">
         <label for="ghRepo">Repo（帳號／專案名）</label>
-        <input type="text" id="ghRepo" placeholder="例：susukuki/tokyo-trip"
-               autocapitalize="off" autocorrect="off" spellcheck="false">
+        <input type="text" id="ghRepo" placeholder="例：susukuki/tokyo-trip" autocapitalize="off" autocorrect="off" spellcheck="false">
       </div>
       <div class="row">
         <div class="field">
           <label for="ghBranch">分支</label>
-          <input type="text" id="ghBranch" placeholder="main"
-                 autocapitalize="off" autocorrect="off" spellcheck="false">
+          <input type="text" id="ghBranch" placeholder="main" autocapitalize="off" autocorrect="off" spellcheck="false">
         </div>
         <div class="field grow2">
           <label for="ghPath">檔案路徑</label>
-          <input type="text" id="ghPath" placeholder="index.html"
-                 autocapitalize="off" autocorrect="off" spellcheck="false">
+          <input type="text" id="ghPath" placeholder="index.html" autocapitalize="off" autocorrect="off" spellcheck="false">
         </div>
       </div>
       <div class="field">
@@ -545,10 +541,9 @@ body.hasbar #toast{bottom:calc(var(--tabbar) + 80px + env(safe-area-inset-bottom
       </div>
       <div class="field">
         <label for="ghToken">你的 GitHub Token</label>
-        <input type="password" id="ghToken" placeholder="github_pat_… 或 ghp_…"
-               autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+        <input type="password" id="ghToken" placeholder="github_pat_… 或 ghp_…" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
       </div>
-      <button class="btn wide ghost" id="ghTest">測試連線</button>
+      <button class="btn wide ghost" id="ghTest" disabled="" style="opacity: 0.6;">測試連線</button>
       <p class="hint" id="ghStatus">尚未測試。</p>
       <p class="hint">
         Token 只存在你自己的手機／電腦，<strong>不會</strong>寫進存檔的網頁檔案，也不會傳給其他人。
@@ -564,7 +559,7 @@ body.hasbar #toast{bottom:calc(var(--tabbar) + 80px + env(safe-area-inset-bottom
       <button class="btn wide ghost" id="doCopy">複製成文字</button>
       <div style="height:9px"></div>
       <label class="btn wide ghost" for="fileIn" style="cursor:pointer">讀入備份檔</label>
-      <input type="file" id="fileIn" accept=".json,application/json" hidden>
+      <input type="file" id="fileIn" accept=".json,application/json" hidden="">
       <p class="hint">在 LINE 裡開網頁時，瀏覽器資料偶爾會被清掉。用手機瀏覽器（Safari／Chrome）開會比較保險。</p>
     </div>
 
@@ -586,19 +581,19 @@ body.hasbar #toast{bottom:calc(var(--tabbar) + 80px + env(safe-area-inset-bottom
 
 <nav class="tabbar" role="tablist" aria-label="主要區塊">
   <button data-tab="overview" role="tab" aria-selected="true">
-    <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span>總覽</span></button>
+    <svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"></path></svg><span>總覽</span></button>
   <button data-tab="days" role="tab" aria-selected="false">
-    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>每日</span></button>
+    <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg><span>每日</span></button>
   <button data-tab="split" role="tab" aria-selected="false">
-    <svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M17 7H9.5a2.5 2.5 0 0 0 0 5h5a2.5 2.5 0 0 1 0 5H6"/></svg><span>分帳</span></button>
+    <svg viewBox="0 0 24 24"><path d="M12 3v18"></path><path d="M17 7H9.5a2.5 2.5 0 0 0 0 5h5a2.5 2.5 0 0 1 0 5H6"></path></svg><span>分帳</span></button>
   <button data-tab="data" role="tab" aria-selected="false">
-    <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg><span>存檔</span></button>
+    <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><path d="M17 21v-8H7v8M7 3v5h8"></path></svg><span>存檔</span></button>
 </nav>
 
 <div id="savebar">
-  <div class="sbtext"><strong id="sbTitle">有修改還沒存檔</strong><span id="sbSub">存檔後上傳到 GitHub，其他人才看得到</span></div>
-  <button class="btn sm alt" id="doLoadBaked" hidden>載入</button>
-  <button class="btn sm" id="doSave">存檔</button>
+  <div class="sbtext"><strong id="sbTitle">存檔中…</strong><span id="sbSub">正在寫回 GitHub</span></div>
+  <button class="btn sm alt" id="doLoadBaked" hidden="">載入</button>
+  <button class="btn sm" id="doSave" disabled="" style="opacity: 0.6;">存檔</button>
 </div>
 
 <div id="toast" role="status" aria-live="polite"></div>
@@ -607,7 +602,7 @@ body.hasbar #toast{bottom:calc(var(--tabbar) + 80px + env(safe-area-inset-bottom
 "use strict";
 
 /*BAKED_START*/
-const BAKED = {"savedAt":"","data":null};
+const BAKED = {"savedAt":"2026-08-14T06:18:53.431Z","data":{"v":3,"members":[{"id":"m1","name":"我"},{"id":"m2","name":"朋友 A"},{"id":"m3","name":"朋友 B"}],"plans":[{"id":"p-arrive","tag":"抵達","title":"抵達東京","outline":"TSA → HND，進市區入住。晚上在飯店附近吃飯，順路看聖誕燈飾。","tip":"","load":1,"wx":1},{"id":"p-atami","tag":"熱海","title":"熱海一日遊","outline":"海岸線 → 來宮神社 → 海鮮 → MOA 美術館 → 溫泉。下雨也有室內備案。","tip":"MOA 美術館週四休館，排的時候避開週四。開館 9:30–16:30，16:00 最後入館。","load":3,"wx":3},{"id":"p-kamakura","tag":"鎌倉","title":"鎌倉＋江之島","outline":"鎌倉大佛 → 長谷寺 → 小町通 → 鶴岡八幡宮 → 江之電 → 江之島。","tip":"下雨的話，把這天跟機動日對調。天氣好就留到傍晚看海。","load":4,"wx":4},{"id":"p-shop1","tag":"購物","title":"市區購物 Day 1","outline":"新宿 → 表參道 → 澀谷。精品、美妝、服飾、百貨。","tip":"","load":3,"wx":1},{"id":"p-free","tag":"自由","title":"自由活動／機動日","outline":"聖誕景點、美術館、咖啡店，或把前面下雨錯過的補回來。彈性最大的一天。","tip":"這天空著是刻意的。哪天天氣不好，就在總覽把那天的行程拖過來。","load":2,"wx":2},{"id":"p-disney","tag":"迪士尼","title":"東京迪士尼樂園","outline":"全天待在園區，不安排其他景點。營運時間 09:00–21:00。","tip":"當天有個別設施休止（瑞士家庭樹屋、灰姑娘的童話大廳等），樂園本身正常營運。","load":5,"wx":3},{"id":"p-shop2","tag":"購物","title":"市區購物 Day 2","outline":"銀座 → 東京站 → 秋葉原。伴手禮、食品、最後補貨。","tip":"","load":3,"wx":1},{"id":"p-return","tag":"回程","title":"回程","outline":"上午早餐、最後採買，整理行李，之後前往羽田。HND → TSA。","tip":"","load":1,"wx":1}],"notes":{"p-arrive":{"am":"吃點！！！"}},"expenses":[],"rate":0.21,"order":["p-arrive","p-atami","p-kamakura","p-shop1","p-free","p-disney","p-shop2","p-return"],"gh":{"repo":"susuxx6615-max/Tokyoplan","branch":"main","path":"index.html"}}};
 /*BAKED_END*/
 
 /* ===== 日期格（照日曆固定，不會變） ===== */
@@ -1555,5 +1550,6 @@ published = fields(BAKED.data ? migrate(BAKED.data) : structuredClone(DEFAULT));
 renderAll();
 setTab("overview");
 </script>
-</body>
-</html>
+
+
+</body></html>
