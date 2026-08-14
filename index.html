@@ -665,7 +665,7 @@ const DEFAULT = {
   plans: structuredClone(PLAN_DEFAULTS),
   notes:{}, expenses:[], rate:0.21, order:[...PLAN_IDS],
   /* repo 設定會跟著檔案走；token 只存在各自的瀏覽器，永遠不寫進檔案 */
-  gh:{repo:"", branch:"main", path:"index.html"}
+  gh:{repo:"susuxx6615-max/Tokyoplan", branch:"main", path:"index.html"}
 };
 const GH_KEY = "tokyo-2026-12-gh";
 let S = load();
@@ -961,7 +961,14 @@ function downloadFile(){
   save();
   toast("已下載 index.html，覆蓋 repo 裡那支再 push 就完成");
 }
-function doPublish(){ ghReady() ? publishToGitHub() : downloadFile(); }
+function doPublish(){
+  if(ghReady()) return publishToGitHub();
+  /* 沒設定就別默默下載，直接帶去設定頁 */
+  setTab("data");
+  toast("先填下面的 GitHub Token，存檔才會寫回網址");
+  const t = $("#ghToken");
+  setTimeout(()=>{ t.scrollIntoView({block:"center", behavior:"smooth"}); t.focus(); }, 260);
+}
 $("#doSave").addEventListener("click", doPublish);
 $("#doSave2").addEventListener("click", doPublish);
 $("#doDownload").addEventListener("click", downloadFile);
