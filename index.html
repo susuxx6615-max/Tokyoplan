@@ -252,7 +252,7 @@ h2.sec:first-child{margin-top:2px}
 /* ---------- forms / buttons ---------- */
 .field{margin-bottom:14px}
 .field > label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;letter-spacing:.06em}
-input[type=text]:not(.editable),input[type=number],select,textarea.box{
+input[type=text]:not(.editable),input[type=number],input[type=password],select,textarea.box{
   width:100%;padding:12px 14px;border:1px solid var(--line);
   border-radius:12px;background-color:#FBFCFA;font-size:16px;
 }
@@ -508,13 +508,53 @@ body.hasbar #toast{bottom:calc(var(--tabbar) + 80px + env(safe-area-inset-bottom
   <!-- 存檔 -->
   <section class="panel" id="p-data" role="tabpanel">
     <h2 class="sec">存檔到網站</h2>
-    <p class="lead">會產生一份新的 index.html，覆蓋掉 GitHub 上那支再 push，其他人打開就看到你改的內容。</p>
+    <p class="lead">存檔會直接寫回 GitHub，其他人重新整理就看到你改的內容。</p>
     <div class="card">
-      <button class="btn wide" id="doSave2">存成 index.html</button>
+      <button class="btn wide" id="doSave2">存到 GitHub</button>
+      <div style="height:9px"></div>
+      <button class="btn wide ghost" id="doDownload">改用下載 index.html</button>
       <div style="height:12px"></div>
       <div class="kv"><span>網站上這份的存檔時間</span><b id="bakedAt">—</b></div>
       <div class="kv"><span>你這台裝置的版本</span><b id="localAt">—</b></div>
-      <p class="hint">流程：存檔 → 下載 → 覆蓋 repo 裡的 <code>index.html</code> → push。沒 push 之前，內容只留在你自己的瀏覽器裡。</p>
+      <p class="hint" id="saveHint">還沒設定 GitHub，現在按存檔會用下載的方式。</p>
+    </div>
+
+    <h2 class="sec">GitHub 設定</h2>
+    <p class="lead">Repo 設定會跟著檔案走，朋友只要填自己的 Token。</p>
+    <div class="card">
+      <div class="field">
+        <label for="ghRepo">Repo（帳號／專案名）</label>
+        <input type="text" id="ghRepo" placeholder="例：susukuki/tokyo-trip"
+               autocapitalize="off" autocorrect="off" spellcheck="false">
+      </div>
+      <div class="row">
+        <div class="field">
+          <label for="ghBranch">分支</label>
+          <input type="text" id="ghBranch" placeholder="main"
+                 autocapitalize="off" autocorrect="off" spellcheck="false">
+        </div>
+        <div class="field grow2">
+          <label for="ghPath">檔案路徑</label>
+          <input type="text" id="ghPath" placeholder="index.html"
+                 autocapitalize="off" autocorrect="off" spellcheck="false">
+        </div>
+      </div>
+      <div class="field">
+        <label for="ghWho">你的名字（會寫在 commit 訊息裡）</label>
+        <input type="text" id="ghWho" placeholder="例：小美">
+      </div>
+      <div class="field">
+        <label for="ghToken">你的 GitHub Token</label>
+        <input type="password" id="ghToken" placeholder="github_pat_… 或 ghp_…"
+               autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+      </div>
+      <button class="btn wide ghost" id="ghTest">測試連線</button>
+      <p class="hint" id="ghStatus">尚未測試。</p>
+      <p class="hint">
+        Token 只存在你自己的手機／電腦，<strong>不會</strong>寫進存檔的網頁檔案，也不會傳給其他人。
+        建議去 GitHub 開 fine-grained token，只勾這一個 repo 的 <code>Contents</code> 讀寫權限。
+        提醒：能編輯的人都需要自己的 token，而且免費版 GitHub Pages 只能開在公開 repo，代表行程和分帳金額是公開的。
+      </p>
     </div>
 
     <h2 class="sec">備份與轉移</h2>
@@ -623,8 +663,11 @@ const DEFAULT = {
   v:3, savedAt:"",
   members:[{id:"m1",name:"我"},{id:"m2",name:"朋友 A"},{id:"m3",name:"朋友 B"}],
   plans: structuredClone(PLAN_DEFAULTS),
-  notes:{}, expenses:[], rate:0.21, order:[...PLAN_IDS]
+  notes:{}, expenses:[], rate:0.21, order:[...PLAN_IDS],
+  /* repo 設定會跟著檔案走；token 只存在各自的瀏覽器，永遠不寫進檔案 */
+  gh:{repo:"", branch:"main", path:"index.html"}
 };
+const GH_KEY = "tokyo-2026-12-gh";
 let S = load();
 let curIdx = 0;
 let curTab = "overview";
@@ -634,8 +677,12 @@ let published = "";
 function fields(x){
   return JSON.stringify({
     members:x.members, plans:x.plans, notes:x.notes,
-    expenses:x.expenses, rate:x.rate, order:x.order
+    expenses:x.expenses, rate:x.rate, order:x.order, gh:x.gh
   });
+}
+function payloadData(){
+  return {v:3, members:S.members, plans:S.plans, notes:S.notes,
+          expenses:S.expenses, rate:S.rate, order:S.order, gh:S.gh};
 }
 function migrate(raw){
   const d = {...structuredClone(DEFAULT), ...structuredClone(raw)};
@@ -663,6 +710,12 @@ function migrate(raw){
       wx: Number.isFinite(s.wx) ? s.wx : def.wx
     };
   });
+  const g = (d.gh && typeof d.gh === "object") ? d.gh : {};
+  d.gh = {
+    repo: typeof g.repo === "string" ? g.repo.trim() : "",
+    branch: (typeof g.branch === "string" && g.branch.trim()) || "main",
+    path: (typeof g.path === "string" && g.path.trim()) || "index.html"
+  };
   const seen = new Set();
   d.order = (Array.isArray(d.order) ? d.order : [])
     .filter(id => PLAN_IDS.includes(id) && !seen.has(id) && (seen.add(id), true));
@@ -739,6 +792,14 @@ function snapshotHTML(){
   const rw = q("#railwrap"); if(rw) rw.setAttribute("hidden","");
   const ro = q("#resetOrder"); if(ro) ro.setAttribute("hidden","");
   ["#bakedAt","#localAt"].forEach(s => { const n = q(s); if(n) n.textContent = "—"; });
+  /* 保險：token 之類的絕不進檔案 */
+  ["#ghRepo","#ghBranch","#ghPath","#ghWho","#ghToken"].forEach(s => {
+    const n = q(s); if(n) n.removeAttribute("value");
+  });
+  const gs = q("#ghStatus"); if(gs) gs.textContent = "尚未測試。";
+  const s2 = q("#doSave2"); if(s2) s2.textContent = "存到 GitHub";
+  const sh = q("#saveHint");
+  if(sh) sh.textContent = "還沒設定 GitHub，現在按存檔會用下載的方式。";
   const sb = q("#savebar"); if(sb) sb.classList.remove("on");
   const lb = q("#doLoadBaked"); if(lb) lb.setAttribute("hidden","");
   const ds = q("#doSave"); if(ds) ds.removeAttribute("hidden");
@@ -755,12 +816,135 @@ function snapshotHTML(){
   if(i < 0 || j < 0 || j < i) return null;
   const json = JSON.stringify({
     savedAt: S.savedAt,
-    data: {v:3, members:S.members, plans:S.plans, notes:S.notes,
-           expenses:S.expenses, rate:S.rate, order:S.order}
+    data: payloadData()
   }).replace(/</g, "\\u003C");
   return html.slice(0, i + A.length) + "\nconst BAKED = " + json + ";\n" + html.slice(j);
 }
-function doPublish(){
+
+/* ===== GitHub ===== */
+function ghLocal(){
+  try{ return JSON.parse(localStorage.getItem(GH_KEY)) || {}; }catch(e){ return {}; }
+}
+function ghSaveLocal(o){
+  try{ localStorage.setItem(GH_KEY, JSON.stringify(o)); }catch(e){}
+}
+const ghReady = () => !!(S.gh.repo && ghLocal().token);
+
+function b64encode(str){
+  const bytes = new TextEncoder().encode(str);
+  let bin = "";
+  for(let i=0;i<bytes.length;i+=0x8000){
+    bin += String.fromCharCode.apply(null, bytes.subarray(i, i+0x8000));
+  }
+  return btoa(bin);
+}
+function b64decode(b64){
+  const bin = atob(String(b64).replace(/\s/g, ""));
+  const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+function extractBaked(html){
+  const A = "/*BAKED" + "_START*/", B = "/*BAKED" + "_END*/";
+  const i = html.indexOf(A), j = html.indexOf(B);
+  if(i < 0 || j < 0 || j < i) return null;
+  const m = html.slice(i + A.length, j).match(/const BAKED\s*=\s*([\s\S]*?);\s*$/);
+  if(!m) return null;
+  try{ return JSON.parse(m[1]); }catch(e){ return null; }
+}
+async function ghApi(path, opts){
+  return fetch("https://api.github.com" + path, {
+    ...opts,
+    headers: {
+      "Authorization": "Bearer " + (ghLocal().token || ""),
+      "Accept": "application/vnd.github+json",
+      "X-GitHub-Api-Version": "2022-11-28",
+      ...((opts && opts.headers) || {})
+    }
+  });
+}
+async function ghErr(r){
+  let m = "";
+  try{ m = (await r.json()).message || ""; }catch(e){}
+  if(r.status === 401) return "Token 不對或已過期";
+  if(r.status === 403) return "沒有權限，檢查 token 有沒有給這個 repo 的 Contents 寫入權";
+  if(r.status === 404) return "找不到 repo、分支或檔案路徑，檢查一下設定";
+  if(r.status === 409) return "有人同時在存檔，等幾秒再試一次";
+  return `GitHub 回應 ${r.status}${m ? "：" + m : ""}`;
+}
+const ghContentsPath = () =>
+  `/repos/${S.gh.repo}/contents/` + S.gh.path.split("/").filter(Boolean).map(encodeURIComponent).join("/");
+
+let saving = false;
+function setSaving(on, label){
+  saving = on;
+  ["#doSave","#doSave2","#doDownload","#ghTest"].forEach(s=>{
+    const b = $(s); if(b){ b.disabled = on; b.style.opacity = on ? ".6" : "1"; }
+  });
+  if(on){
+    $("#sbTitle").textContent = label || "存檔中…";
+    $("#sbSub").textContent = "正在寫回 GitHub";
+  }else{
+    updateBar();
+  }
+}
+
+async function publishToGitHub(){
+  if(saving) return;
+  if(!/^[\w.-]+\/[\w.-]+$/.test(S.gh.repo)){
+    setTab("data"); return toast("先填 repo，格式是「帳號/專案名」");
+  }
+  if(!ghLocal().token){ setTab("data"); return toast("先填你的 GitHub Token"); }
+
+  setSaving(true);
+  const prev = S.savedAt;
+  try{
+    /* 1. 讀現在 repo 上那份，拿 sha，順便看有沒有人比你晚存 */
+    let sha = null;
+    const getR = await ghApi(ghContentsPath() + "?ref=" + encodeURIComponent(S.gh.branch));
+    if(getR.status === 200){
+      const j = await getR.json();
+      sha = j.sha;
+      const remote = extractBaked(b64decode(j.content));
+      if(remote && remote.savedAt && (!S.savedAt || remote.savedAt > S.savedAt)){
+        BAKED.savedAt = remote.savedAt;
+        BAKED.data = remote.data;
+        setSaving(false);
+        toast("網站上有別人更新的版本，先按「載入」看過再存");
+        return;
+      }
+    }else if(getR.status !== 404){
+      throw new Error(await ghErr(getR));
+    }
+
+    /* 2. 產生新檔案並 commit */
+    S.savedAt = new Date().toISOString();
+    const html = snapshotHTML();
+    if(!html) throw new Error("產生檔案失敗");
+    const who = (ghLocal().who || "").trim();
+    const body = {
+      message: `更新東京行程${who ? "（" + who + "）" : ""}`,
+      content: b64encode(html),
+      branch: S.gh.branch
+    };
+    if(sha) body.sha = sha;
+    const putR = await ghApi(ghContentsPath(), {method:"PUT", body: JSON.stringify(body)});
+    if(!putR.ok) throw new Error(await ghErr(putR));
+
+    /* 3. 這頁的 BAKED 同步成剛剛送上去的內容 */
+    BAKED.savedAt = S.savedAt;
+    BAKED.data = JSON.parse(JSON.stringify(payloadData()));
+    published = fields(S);
+    save();
+    setSaving(false);
+    toast("存好了，GitHub Pages 約 30 秒後更新");
+  }catch(err){
+    S.savedAt = prev;
+    setSaving(false);
+    toast(String(err.message || err).slice(0, 80) || "存檔失敗");
+  }
+}
+
+function downloadFile(){
   const prev = S.savedAt;
   S.savedAt = new Date().toISOString();
   const html = snapshotHTML();
@@ -775,10 +959,63 @@ function doPublish(){
   }catch(e){ S.savedAt = prev; toast("下載失敗"); return; }
   published = fields(S);
   save();
-  toast("已下載 index.html，覆蓋 GitHub 上那支再 push 就完成");
+  toast("已下載 index.html，覆蓋 repo 裡那支再 push 就完成");
 }
+function doPublish(){ ghReady() ? publishToGitHub() : downloadFile(); }
 $("#doSave").addEventListener("click", doPublish);
 $("#doSave2").addEventListener("click", doPublish);
+$("#doDownload").addEventListener("click", downloadFile);
+
+/* ===== GitHub 設定表單 ===== */
+function renderGh(){
+  const l = ghLocal();
+  $("#ghRepo").value = S.gh.repo;
+  $("#ghBranch").value = S.gh.branch;
+  $("#ghPath").value = S.gh.path;
+  $("#ghWho").value = l.who || "";
+  $("#ghToken").value = l.token || "";
+  $("#doSave2").textContent = ghReady() ? "存到 GitHub" : "存到 GitHub（尚未設定）";
+  $("#saveHint").textContent = ghReady()
+    ? `存檔會寫回 ${S.gh.repo} 的 ${S.gh.branch} 分支，蓋掉 ${S.gh.path}。`
+    : "還沒設定 GitHub，現在按存檔會用下載的方式。";
+}
+[["#ghRepo","repo"],["#ghBranch","branch"],["#ghPath","path"]].forEach(([sel,key])=>{
+  $(sel).addEventListener("input", ()=>{
+    S.gh[key] = $(sel).value.trim() || DEFAULT.gh[key];
+    save(); renderGh();
+  });
+});
+[["#ghToken","token"],["#ghWho","who"]].forEach(([sel,key])=>{
+  $(sel).addEventListener("input", ()=>{
+    const l = ghLocal(); l[key] = $(sel).value.trim(); ghSaveLocal(l);
+    renderGh();
+  });
+});
+$("#ghTest").addEventListener("click", async ()=>{
+  const st = $("#ghStatus");
+  if(!/^[\w.-]+\/[\w.-]+$/.test(S.gh.repo)){ st.textContent = "repo 格式要是「帳號/專案名」。"; return; }
+  if(!ghLocal().token){ st.textContent = "還沒填 Token。"; return; }
+  st.textContent = "測試中…";
+  setSaving(true, "測試中…");
+  try{
+    const r = await ghApi(`/repos/${S.gh.repo}/contents/` +
+      S.gh.path.split("/").filter(Boolean).map(encodeURIComponent).join("/") +
+      "?ref=" + encodeURIComponent(S.gh.branch));
+    if(r.status === 200){
+      const j = await r.json();
+      const b = extractBaked(b64decode(j.content));
+      st.textContent = `連得上。repo 上這支檔案 ${Math.round(j.size/1024)} KB，` +
+        (b && b.savedAt ? `上次存檔 ${fmtTime(b.savedAt)}。` : "還沒有存檔紀錄。");
+    }else if(r.status === 404){
+      st.textContent = "連得上，但這個路徑還沒有檔案。第一次存檔會幫你建立。";
+    }else{
+      st.textContent = "失敗：" + (await ghErr(r));
+    }
+  }catch(e){
+    st.textContent = "連不上：" + (e.message || e);
+  }
+  setSaving(false);
+});
 $("#doLoadBaked").addEventListener("click", ()=>{
   if(!BAKED.data) return;
   if(!confirm("載入網站上的版本？你目前手上的內容會被蓋掉。")) return;
@@ -1296,13 +1533,16 @@ $("#doPaste").addEventListener("click", ()=>{
 });
 $("#doReset").addEventListener("click", ()=>{
   if(!confirm("所有筆記、分帳紀錄、改過的標題都會還原，確定？")) return;
-  S = structuredClone(DEFAULT); selWho = null; save(); renderAll();
+  const keepGh = structuredClone(S.gh);
+  S = structuredClone(DEFAULT);
+  S.gh = keepGh;                 /* GitHub 設定留著，不然還要重設一次 */
+  selWho = null; save(); renderAll();
   toast("已清空");
 });
 
 /* ===== 啟動 ===== */
 function renderAll(){
-  renderOverview(); renderRail(); renderDay(); renderSplit(); updateBar();
+  renderOverview(); renderRail(); renderDay(); renderSplit(); renderGh(); updateBar();
 }
 published = fields(BAKED.data ? migrate(BAKED.data) : structuredClone(DEFAULT));
 renderAll();
